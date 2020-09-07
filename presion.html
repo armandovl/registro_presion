@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta charset="utf-8"> 
+    <!--No se que sea y si se puede cambiar por otro-->
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <!--<script type="text/javascript" src="https://www.google.com/jsapi"></script>-->
+
+    <script type="text/javascript">
+
+      /*----------------//Estoy añadiento controles-------------------*/
+      google.charts.load('current', {'packages':['corechart','controls', 'table']});
+      /*----------------//Estoy añadiento controles-------------------*/
+
+      /*----------------//llamamos alos datos de la funcion-------------------*/
+      google.charts.setOnLoadCallback(drawVisualization);
+
+
+
+      /*----------------//Con estas funciones traemos los datos de la spreadsheet-------------------*/
+      function drawVisualization() {
+
+      var queryString = encodeURIComponent('SELECT A, B, C, D, F, G, H, I LIMIT 100 OFFSET 0'); //Limit solo voy a agarrar 100 filas columna A, offset empieza a contar fila 0
+
+
+      // Hasta antes de este simbolo /gviz/tq?sheet= va la url de la Spreadsheet, sheet=AQUIVANOMBREHOJA&headers=1&tq=' + queryString);
+      var query = new google.visualization.Query(
+          'https://docs.google.com/spreadsheets/d/17WJNgTwwTQF_1UM3LiLmRW5LUy71kzj0dFia-CcXux8/gviz/tq?sheet=RegistroPresion&headers=1&tq=' + queryString);
+      //se cambia con click en el boton superior derecho, obtener vínculo
+      query.send(handleSampleDataQueryResponse);
+      }
+
+     handleSampleDataQueryResponse();//estamos llamando a la funcion lo cual se le olvida en el ejemplo
+    function handleSampleDataQueryResponse(response) {
+      if (response.isError()) {
+        alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+        return;
+      }
+
+      var data = response.getDataTable();
+     /*----------------//Con esta funcion traemos los datos de la spreadsheet-------------------*/
+
+
+    // Create un tablero.
+        var dashboard = new google.visualization.Dashboard(
+            document.getElementById('dashboard_div')); //así se va a llamar el tablero
+
+        // Create a filtro por numeros
+        var Filtro_Fecha = new google.visualization.ControlWrapper({
+          'controlType': 'ChartRangeFilter',
+          'containerId': 'filtroporFecha',
+          'options': {
+            'filterColumnLabel': 'Marca temporal',
+
+          }
+
+        });
+
+
+        var Filtro_Fecha2 = new google.visualization.ControlWrapper({
+          'controlType': 'DateRangeFilter',
+          'containerId': 'filtroporfecha2',
+          'options': {
+            'filterColumnLabel': 'Marca temporal',
+
+
+          }
+        });
+
+
+          // Create a Combo chart, passing some options
+        var ComboChart = new google.visualization.ChartWrapper({
+          'chartType': 'ComboChart',
+          'containerId': 'chart_Combo',
+          'options': {
+            //'width': 1350,
+            'height': 450,
+            'seriesType': 'scatter',
+            'title' : 'Presión Arterial Por Día',
+            'vAxis': {title: 'Cantidades', maxValue: 140, minValue: 10},
+            'hAxis': {title: 'Fecha de registro'},
+            colors: ['blue', 'green', 'red',
+             '#703593', '#FE2E9A', '#703593', '#FE2E9A'],
+            'series':{
+            0: { pointShape: 'star', pointSize:15},
+            1: { pointShape: 'triangle', pointSize:10 },
+            2: { pointShape: 'triangle', pointSize:10 },
+            3: { pointShape: 'circle',  pointSize:10, type:'line' },
+            4: { pointShape: 'circle', pointSize:10, type:'line' },
+            5: { pointShape: 'circle', type: 'area' },
+            6: { pointShape: 'circle', type: 'area'},
+            },
+          }
+        });
+
+
+
+ dashboard.bind([Filtro_Fecha,Filtro_Fecha2],[ComboChart]); //primero van los filtros, despues van las graficas
+
+ // Draw the dashboard.
+        dashboard.draw(data);
+
+    };
+
+
+
+    </script>
+  </head>
+  <body>
+
+<!--aqui esta la presion graficos-->
+    <br>
+    <br>
+    <div id="dashboard_div"></div>
+    <div id="filtroporFecha"></div>
+    <br>
+    <div id="dashboard_div2"></div>
+    <div id="filtroporfecha2"></div>
+    <div id="chart_Combo"></div>
+    <br>
+    <br>
+
+<div>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <!--<script type="text/javascript" src="https://www.google.com/jsapi"></script>-->
+    
+    <script type="text/javascript">
+
+      /*----------------//Estoy añadiento controles-------------------*/
+      google.charts.load('current', {'packages':['corechart','controls', 'table']});
+      /*----------------//Estoy añadiento controles-------------------*/
+
+      /*----------------//llamamos alos datos de la funcion-------------------*/
+       google.charts.setOnLoadCallback(dibujarTabla);
+
+/*_____________________________aqui empieza la tabla__________________-----------*/
+
+ function dibujarTabla() {
+      var ConsultaColumna = encodeURIComponent('SELECT A, E, F, G, J  LIMIT 100 OFFSET 0'); //Limin solo voy a agarrar 1000 filas columna A, offset empieza a contar fila 0
+
+     var Desdelahoja = new google.visualization.Query(
+          'https://docs.google.com/spreadsheets/d/17WJNgTwwTQF_1UM3LiLmRW5LUy71kzj0dFia-CcXux8/gviz/tq?sheet=RegistroPresion&headers=1&tq=' + ConsultaColumna);
+      Desdelahoja.send(FuncionRespuesta);
+      }
+
+     FuncionRespuesta();//estamos llamando a la funcion lo cual se le olvida en el ejemplo
+    function FuncionRespuesta(Respuesta) {
+      if (Respuesta.isError()) {
+        alert('Error in query: ' + Respuesta.getMessage() + ' ' + Respuesta.getDetailedMessage());
+        return;
+      }
+
+      var data2 = Respuesta.getDataTable();
+
+      /*esto que chibgaos es por esto no se me pintaba la tabla*/
+      var dashboard2 = new google.visualization.Dashboard(
+            document.getElementById('dashboard_div2')); //así se va a llamar el tablero
+ /*--------Hasta aquí me extrae los datos de la hoja-------------------------------*/
+
+ // Create a filtro por fecha
+var Filtro_Fecha2 = new google.visualization.ControlWrapper({
+          'controlType': 'DateRangeFilter',
+          'containerId': 'filtroporfecha2',
+          'options': {
+            'filterColumnLabel': 'Marca temporal'
+
+          }
+        });
+        
+
+ // Create a filtro por categoria
+var Filtro_Categoria = new google.visualization.ControlWrapper({
+          'controlType': 'CategoryFilter',
+          'containerId': 'filtroporCategoria',
+          'options': {
+            'filterColumnLabel': 'Dictamen'
+          }
+        });
+
+
+
+ // Create a TABLE chart, passing some options
+        var TableChart = new google.visualization.ChartWrapper({
+          'chartType': 'Table',
+          'containerId': 'chart_Tabla',
+          'options': {
+            'width': 800,
+            'height': 350,
+            
+            
+          }
+        });
+
+dashboard2.bind([Filtro_Fecha2,Filtro_Categoria],[TableChart]); //primero van los filtros, despues van las graficas
+
+        // Draw the dashboard.
+        dashboard2.draw(data2);
+
+
+        exportarAExcel();
+  
+};// por este no me jalaba 
+
+
+
+/*_____________________________aqui termina la tabla____________________*/
+
+ function exportarAExcel() {
+      var Componentes = [
+          
+          {type: 'csv', datasource: 'https://spreadsheets.google.com/tq?key=17WJNgTwwTQF_1UM3LiLmRW5LUy71kzj0dFia-CcXux8'},
+          {type: 'html', datasource: 'https://spreadsheets.google.com/tq?key=17WJNgTwwTQF_1UM3LiLmRW5LUy71kzj0dFia-CcXux8'},
+          
+      ];
+
+      var Contenedor = document.getElementById('toolbar_div2');
+      google.visualization.drawToolbar(Contenedor, Componentes);
+    };
+
+
+  </script>
+
+    <center>
+    <div id="dashboard_div2"></div>
+
+    <div id="filtroporfecha2"></div>
+    <div id="filtroporCategoria"></div>
+    <div id="chart_Tabla"></div>
+    <div id="toolbar_div2"></div>
+
+  </center>
+
+  <br><br><br><br><br>
+  
+</div>
+
+  </body>
+</html>
+
